@@ -1592,6 +1592,24 @@ DWORD WINAPI pluto_tx_thread_ep(LPVOID lpParameter) {
 
 	// Create IIO context to access ADALM-Pluto
 	ctx = iio_create_default_context();
+	
+	// Scan for ADALM-Pluto device
+	struct iio_scan_context *scan_ctx;
+	struct iio_context_info **info;
+	scan_ctx = iio_create_scan_context(NULL, 0);
+	if (scan_ctx) {
+		int info_count = iio_scan_context_get_info_list(scan_ctx, &info);
+		// Connect via URI when at least one pluto was found, no other connection option was given
+		// and a default context was not created.
+		if ((info_count > 0) && (plutotx.uri == NULL) && (plutotx.hostname == NULL) && (ctx == NULL)) {
+			plutotx.uri = _strdup(iio_context_info_get_uri(info[0]));
+			ctx = iio_create_context_from_uri(plutotx.uri);
+			iio_context_info_list_free(info);
+		}
+		iio_scan_context_destroy(scan_ctx);
+	}
+
+	// Create context from given option
 	if (ctx == NULL) {
 		if (plutotx.hostname != NULL) {
 			ctx = iio_create_network_context(plutotx.hostname);
@@ -1600,11 +1618,13 @@ DWORD WINAPI pluto_tx_thread_ep(LPVOID lpParameter) {
 			ctx = iio_create_context_from_uri(plutotx.uri);
 		}
 		else {
+			// Last chance to create a context
 			ctx = iio_create_network_context("pluto.local");
 		}
 	}
 
 	if (ctx == NULL) {
+		// Bail out in case there is still no context
 		iio_strerror(errno, buf, sizeof(buf));
 		fprintf(stderr, "Failed creating IIO context: %s\n", buf);
 		goto pluto_thread_exit;
@@ -1691,6 +1711,7 @@ pluto_thread_exit:
 	if (tx0_i) { iio_channel_disable(tx0_i); }
 	if (tx0_q) { iio_channel_disable(tx0_q); }
 	if (ctx) { iio_context_destroy(ctx); }
+	free((void*)plutotx.uri);
 
 	// Wake the main thread (if it's still waiting)
 	WaitForSingleObject(plutotx.data_mutex, INFINITE);
