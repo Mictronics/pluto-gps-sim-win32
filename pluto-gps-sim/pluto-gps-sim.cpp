@@ -1598,7 +1598,7 @@ DWORD WINAPI pluto_tx_thread_ep(LPVOID lpParameter) {
 	struct iio_context_info **info;
 	scan_ctx = iio_create_scan_context(NULL, 0);
 	if (scan_ctx) {
-		int info_count = iio_scan_context_get_info_list(scan_ctx, &info);
+		int info_count = (int) iio_scan_context_get_info_list(scan_ctx, &info);
 		// Connect via URI when at least one pluto was found, no other connection option was given
 		// and a default context was not created.
 		if ((info_count > 0) && (plutotx.uri == NULL) && (plutotx.hostname == NULL) && (ctx == NULL)) {
@@ -1693,7 +1693,7 @@ DWORD WINAPI pluto_tx_thread_ep(LPVOID lpParameter) {
 		PulseEvent(plutotx.data_cond);
 		ReleaseMutex(plutotx.data_mutex);
 		// Schedule TX buffer
-		ntx = iio_buffer_push(tx_buffer);
+		ntx = (int32_t)iio_buffer_push(tx_buffer);
 		if (ntx < 0) {
 			fprintf(stderr, "Error pushing buf %d\n", (int)ntx);
 			break;;
