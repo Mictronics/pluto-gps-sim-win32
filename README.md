@@ -41,7 +41,7 @@ is selected.
 5. Copy DLL's from libiio and libad9361 to output folder (Debug or Release) or system32 folder.
 6. Requires a copy of zcat.exe either in output folder (Debug or Release) or somewhere referenced by PATH variable.
 
-:exclamation: Tested on Windows 7 only.
+:exclamation: Tested on Windows 7 only. Builds also as x64 target.
 
 ### Usage
 ```
