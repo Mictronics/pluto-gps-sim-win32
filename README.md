@@ -80,6 +80,11 @@ Set RF bandwidth:
 ```
 Default 3.0MHz. Applicable range 1.0MHz to 5.0MHz
 
+### Transmitting the samples
+
+The TX port of a particular SDR platform is connected to the GPS receiver
+under test through a DC block and a fixed 50-60dB attenuator.
+
 ### License
 
 Copyright &copy; 2018 Mictronics
