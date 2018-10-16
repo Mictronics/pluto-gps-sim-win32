@@ -5,7 +5,7 @@
 * This file is part of the Win32 pluto-gps-sim project at
 * https://github.com/mictronics/pluto-gps-sim-w32.git
 *
-* Copyright © 2018 Mictronics
+* Copyright Â© 2018 Mictronics
 * Distributed under the MIT License.
 *
 */
@@ -1967,6 +1967,8 @@ int main(int argc, char *argv[]) {
 		{
 			system("zcat rinex.Z > brdc.n");
 			_unlink("rinex.Z");
+			char default_navfile[] = "brdc.n";
+			navfile = default_navfile;
 		}
 		else {
 			err = GetLastError();
